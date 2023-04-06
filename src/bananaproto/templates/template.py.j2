@@ -193,6 +193,7 @@ class {{ service.py_name }}Base(ServiceBase):
             {# Client streaming: need a request iterator instead #}
             , msg_iter: AsyncIterator[{{ method.py_input_message_type }}]
         {%- endif -%}
+            , metadata: "MetadataLike"
             ) -> {% if method.server_streaming %}AsyncIterator[{{ method.py_output_message_type }}]{% else %}{{ method.py_output_message_type }}{% endif %}:
         {% if method.comment %}
 {{ method.comment }}
@@ -210,13 +211,14 @@ class {{ service.py_name }}Base(ServiceBase):
         request = stream.__aiter__()
         {% endif %}
         {% if not method.server_streaming %}
-        response = await self.{{ method.py_name }}(request)
+        response = await self.{{ method.py_name }}(request, stream.metadata)
         await stream.send_message(response)
         {% else %}
         await self._call_rpc_handler_server_stream(
             self.{{ method.py_name }},
             stream,
             request,
+            stream.metadata,
         )
         {% endif %}
 
