@@ -843,3 +843,11 @@ class ServiceMethodCompiler(ProtoContentBase):
     @property
     def server_streaming(self) -> bool:
         return self.proto_obj.server_streaming
+
+    @property
+    def py_input_empty(self) -> bool:
+        return self.py_input_message_type == 'bananaproto_lib_google_protobuf.Empty'
+
+    @property
+    def py_output_empty(self) -> bool:
+        return self.py_output_message_type == 'bananaproto_lib_google_protobuf.Empty'

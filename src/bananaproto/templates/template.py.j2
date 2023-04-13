@@ -113,7 +113,7 @@ class {{ service.py_name }}Stub(bananaproto.ServiceStub):
     {% for method in service.methods %}
     async def {{ method.py_name }}(self,
         {%- if not method.client_streaming -%}
-            {%- if method.py_input_message -%} msg: {{ method.py_input_message_type }}, {%- endif -%}
+            {%- if method.py_input_message and not method.py_input_empty -%} msg: {{ method.py_input_message_type }}, {%- endif -%}
         {%- else -%}
             {# Client streaming: need a request iterator instead #}
             msg_iter: Union[AsyncIterable[{{ method.py_input_message_type }}], Iterable[{{ method.py_input_message_type }}]],
@@ -142,7 +142,11 @@ class {{ service.py_name }}Stub(bananaproto.ServiceStub):
             {% else %}{# i.e. not client streaming #}
         async for response in self._unary_stream(
             "{{ method.route }}",
-            msg,
+            {%- if method.py_input_empty -%}
+                {{ method.py_input_message_type }}(),
+            {%- else -%}
+                msg,
+            {%- endif -%}
             {{ method.py_output_message_type.strip('"') }},
             timeout=timeout,
             deadline=deadline,
@@ -165,7 +169,11 @@ class {{ service.py_name }}Stub(bananaproto.ServiceStub):
             {% else %}{# i.e. not client streaming #}
         return await self._unary_unary(
             "{{ method.route }}",
-            msg,
+            {%- if method.py_input_empty -%}
+                {{ method.py_input_message_type }}(),
+            {%- else -%}
+                msg,
+            {%- endif -%}
             {{ method.py_output_message_type.strip('"') }},
             timeout=timeout,
             deadline=deadline,

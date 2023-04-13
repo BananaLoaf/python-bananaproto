@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package service_with_empty;
+
+import "google/protobuf/empty.proto";
+
+service Test {
+  rpc DoThing (google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc DoManyThings (stream google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc GetThingVersions (google.protobuf.Empty) returns (stream google.protobuf.Empty);
+  rpc GetDifferentThings (stream google.protobuf.Empty) returns (stream google.protobuf.Empty);
+}
