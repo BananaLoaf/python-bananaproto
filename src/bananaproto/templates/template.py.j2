@@ -120,8 +120,8 @@ class {{ service.py_name }}Stub(bananaproto.ServiceStub):
         {%- endif -%}
             *,
             timeout: Optional[float] = None,
-            deadline: Optional["Deadline"] = None,
-            metadata: Optional["MetadataLike"] = None,
+            deadline: Optional[Deadline] = None,
+            metadata: Optional[MetadataLike] = None,
             ) -> {% if method.server_streaming %}AsyncIterator[{{ method.py_output_message_type }}]{% else %}{{ method.py_output_message_type }}{% endif %}:
         {% if method.comment %}
 {{ method.comment }}
@@ -192,7 +192,7 @@ class {{ service.py_name }}Base(ServiceBase):
             {# Client streaming: need a request iterator instead #}
             msg_iter: AsyncIterator[{{ method.py_input_message_type }}],
         {%- endif -%}
-            metadata: "MetadataLike",
+            metadata: MetadataLike,
             ) -> {% if method.server_streaming %}AsyncIterator[{{ method.py_output_message_type }}]{% else %}{{ method.py_output_message_type }}{% endif %}:
         {% if method.comment %}
 {{ method.comment }}
