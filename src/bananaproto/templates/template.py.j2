@@ -111,18 +111,17 @@ class {{ service.py_name }}Stub(bananaproto.ServiceStub):
     pass
     {% endif %}
     {% for method in service.methods %}
-    async def {{ method.py_name }}(self
+    async def {{ method.py_name }}(self,
         {%- if not method.client_streaming -%}
-            {%- if method.py_input_message -%}, msg: {{ method.py_input_message_type }}{%- endif -%}
+            {%- if method.py_input_message -%} msg: {{ method.py_input_message_type }}, {%- endif -%}
         {%- else -%}
             {# Client streaming: need a request iterator instead #}
-            , msg_iter: Union[AsyncIterable[{{ method.py_input_message_type }}], Iterable[{{ method.py_input_message_type }}]]
+            msg_iter: Union[AsyncIterable[{{ method.py_input_message_type }}], Iterable[{{ method.py_input_message_type }}]],
         {%- endif -%}
-            ,
-            *
-            , timeout: Optional[float] = None
-            , deadline: Optional["Deadline"] = None
-            , metadata: Optional["MetadataLike"] = None
+            *,
+            timeout: Optional[float] = None,
+            deadline: Optional["Deadline"] = None,
+            metadata: Optional["MetadataLike"] = None,
             ) -> {% if method.server_streaming %}AsyncIterator[{{ method.py_output_message_type }}]{% else %}{{ method.py_output_message_type }}{% endif %}:
         {% if method.comment %}
 {{ method.comment }}
@@ -186,14 +185,14 @@ class {{ service.py_name }}Base(ServiceBase):
     {% endif %}
 
     {% for method in service.methods %}
-    async def {{ method.py_name }}(self
+    async def {{ method.py_name }}(self,
         {%- if not method.client_streaming -%}
-            {%- if method.py_input_message -%}, msg: {{ method.py_input_message_type }}{%- endif -%}
+            {%- if method.py_input_message -%}msg: {{ method.py_input_message_type }}, {%- endif -%}
         {%- else -%}
             {# Client streaming: need a request iterator instead #}
-            , msg_iter: AsyncIterator[{{ method.py_input_message_type }}]
+            msg_iter: AsyncIterator[{{ method.py_input_message_type }}],
         {%- endif -%}
-            , metadata: "MetadataLike"
+            metadata: "MetadataLike",
             ) -> {% if method.server_streaming %}AsyncIterator[{{ method.py_output_message_type }}]{% else %}{{ method.py_output_message_type }}{% endif %}:
         {% if method.comment %}
 {{ method.comment }}
