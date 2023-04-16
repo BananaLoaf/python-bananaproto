@@ -54,6 +54,7 @@ from bananaproto.casing import sanitize_name
 from bananaproto.compile.importing import (
     get_type_reference,
     parse_source_type_name,
+    WRAPPER_TYPES,
 )
 from bananaproto.compile.naming import (
     pythonize_class_name,
@@ -744,9 +745,7 @@ class ServiceMethodCompiler(ProtoContentBase):
         self.output_file.imports.add(
             "from bananaproto.grpc.grpclib_client import MetadataLike"
         )
-        self.output_file.imports.add(
-            "from grpclib.metadata import Deadline"
-        )
+        self.output_file.imports.add("from grpclib.metadata import Deadline")
 
         super().__post_init__()  # check for unset fields
 
@@ -790,6 +789,15 @@ class ServiceMethodCompiler(ProtoContentBase):
             ):
                 return msg
         return None
+
+    @property
+    def py_input_message_unwrapped(self) -> str:
+        if self.proto_obj.input_type in WRAPPER_TYPES.keys():
+            func_message = f"msg: {type(WRAPPER_TYPES[self.proto_obj.input_type]().value).__name__}"
+        else:
+            func_message = f"msg: {self.py_input_message_type}"
+
+        return func_message
 
     @property
     def py_input_message_type(self) -> str:
@@ -845,9 +853,27 @@ class ServiceMethodCompiler(ProtoContentBase):
         return self.proto_obj.server_streaming
 
     @property
-    def py_input_empty(self) -> bool:
-        return self.py_input_message_type == 'bananaproto_lib_google_protobuf.Empty'
+    def input_empty(self) -> bool:  # TODO tests for unwrapped types
+        return self.proto_obj.input_type == ".google.protobuf.Empty"
 
     @property
-    def py_output_empty(self) -> bool:
-        return self.py_output_message_type == 'bananaproto_lib_google_protobuf.Empty'
+    def output_empty(self) -> bool:
+        return self.proto_obj.output_type == ".google.protobuf.Empty"
+
+    @property
+    def input_googletype(self) -> bool:
+        return self.proto_obj.input_type in WRAPPER_TYPES.keys()
+
+    @property
+    def output_googletype(self) -> bool:
+        return self.proto_obj.output_type in WRAPPER_TYPES.keys()
+
+    @property
+    def input_googletype_unwrapped(self) -> str:
+        if self.input_googletype:
+            return type(WRAPPER_TYPES[self.proto_obj.input_type]().value).__name__
+
+    @property
+    def output_googletype_unwrapped(self) -> str:
+        if self.output_googletype:
+            return type(WRAPPER_TYPES[self.proto_obj.output_type]().value).__name__
