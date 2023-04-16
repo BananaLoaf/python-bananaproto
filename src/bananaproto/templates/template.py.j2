@@ -18,19 +18,18 @@ from dataclasses import dataclass
 
 {% if output_file.datetime_imports %}
 from datetime import {% for i in output_file.datetime_imports|sort %}{{ i }}{% if not loop.last %}, {% endif %}{% endfor %}
-
 {% endif%}
+
 {% if output_file.typing_imports %}
 from typing import {% for i in output_file.typing_imports|sort %}{{ i }}{% if not loop.last %}, {% endif %}{% endfor %}
-
 {% endif %}
 
 {% if output_file.pydantic_imports %}
 from pydantic import {% for i in output_file.pydantic_imports|sort %}{{ i }}{% if not loop.last %}, {% endif %}{% endfor %}
-
 {% endif %}
 
 import bananaproto
+
 {% if output_file.services %}
 from bananaproto.grpc.grpclib_server import ServiceBase
 import grpclib
@@ -44,41 +43,44 @@ import grpclib
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-{% for i in output_file.imports_type_checking_only|sort %}    {{ i }}
+{% for i in output_file.imports_type_checking_only|sort %}
+    {{ i }}
 {% endfor %}
 {% endif %}
 
-{% if output_file.enums %}{% for enum in output_file.enums %}
+{% if output_file.enums %}
+{% for enum in output_file.enums %}
 class {{ enum.py_name }}(bananaproto.Enum):
-    {% if enum.comment %}
-{{ enum.comment }}
 
-    {% endif %}
+{% if enum.comment %}
+{{ enum.comment }}
+{% endif %}
+
     {% for entry in enum.entries %}
     {{ entry.name }} = {{ entry.value }}
         {% if entry.comment %}
 {{ entry.comment }}
-
         {% endif %}
     {% endfor %}
 
-
 {% endfor %}
 {% endif %}
+
 {% for message in output_file.messages %}
 @dataclass(eq=False, repr=False)
 class {{ message.py_name }}(bananaproto.Message):
     {% if message.comment %}
 {{ message.comment }}
-
     {% endif %}
+
     {% for field in message.fields %}
     {{ field.get_field_string() }}
         {% if field.comment %}
 {{ field.comment }}
-
         {% endif %}
+
     {% endfor %}
+
     {% if not message.fields %}
     pass
     {% endif %}
@@ -102,31 +104,34 @@ class {{ message.py_name }}(bananaproto.Message):
     {%  endif %}
 
 {% endfor %}
+
 {% for service in output_file.services %}
 class {{ service.py_name }}Stub(bananaproto.ServiceStub):
     {% if service.comment %}
 {{ service.comment }}
-
     {% elif not service.methods %}
     pass
     {% endif %}
+
     {% for method in service.methods %}
     async def {{ method.py_name }}(self,
+
         {%- if not method.client_streaming -%}
             {%- if method.py_input_message and not method.py_input_empty -%} msg: {{ method.py_input_message_type }}, {%- endif -%}
         {%- else -%}
             {# Client streaming: need a request iterator instead #}
             msg_iter: Union[AsyncIterable[{{ method.py_input_message_type }}], Iterable[{{ method.py_input_message_type }}]],
         {%- endif -%}
+
             *,
             timeout: Optional[float] = None,
             deadline: Optional[Deadline] = None,
             metadata: Optional[MetadataLike] = None,
             ) -> {% if method.server_streaming %}AsyncIterator[{{ method.py_output_message_type }}]{% else %}{{ method.py_output_message_type }}{% endif %}:
         {% if method.comment %}
-{{ method.comment }}
-
+    {{ method.comment }}
         {% endif %}
+
         {% if method.server_streaming %}
             {% if method.client_streaming %}
         async for response in self._stream_stream(
@@ -153,8 +158,8 @@ class {{ service.py_name }}Stub(bananaproto.ServiceStub):
             metadata=metadata,
         ):
             yield response
+        {% endif %}{# if client streaming #}
 
-            {% endif %}{# if client streaming #}
         {% else %}{# i.e. not server streaming #}
             {% if method.client_streaming %}
         return await self._stream_unary(
@@ -189,34 +194,37 @@ class {{ service.py_name }}Stub(bananaproto.ServiceStub):
 class {{ service.py_name }}Base(ServiceBase):
     {% if service.comment %}
 {{ service.comment }}
-
     {% endif %}
 
     {% for method in service.methods %}
     async def {{ method.py_name }}(self,
+
         {%- if not method.client_streaming -%}
             {%- if method.py_input_message -%}msg: {{ method.py_input_message_type }}, {%- endif -%}
         {%- else -%}
             {# Client streaming: need a request iterator instead #}
             msg_iter: AsyncIterator[{{ method.py_input_message_type }}],
         {%- endif -%}
+
             metadata: MetadataLike,
             ) -> {% if method.server_streaming %}AsyncIterator[{{ method.py_output_message_type }}]{% else %}{{ method.py_output_message_type }}{% endif %}:
         {% if method.comment %}
-{{ method.comment }}
-
+    {{ method.comment }}
         {% endif %}
+
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
     {% endfor %}
 
     {% for method in service.methods %}
     async def __rpc_{{ method.py_name }}(self, stream: grpclib.server.Stream[{{ method.py_input_message_type }}, {{ method.py_output_message_type }}]) -> None:
+
         {% if not method.client_streaming %}
         request = await stream.recv_message()
         {% else %}
         request = stream.__aiter__()
         {% endif %}
+
         {% if not method.server_streaming %}
         response = await self.{{ method.py_name }}(request, stream.metadata)
         await stream.send_message(response)
@@ -227,6 +235,7 @@ class {{ service.py_name }}Base(ServiceBase):
             request,
             stream.metadata,
         )
+
         {% endif %}
 
     {% endfor %}
@@ -236,6 +245,7 @@ class {{ service.py_name }}Base(ServiceBase):
         {% for method in service.methods %}
         "{{ method.route }}": grpclib.const.Handler(
             self.__rpc_{{ method.py_name }},
+
             {% if not method.client_streaming and not method.server_streaming %}
             grpclib.const.Cardinality.UNARY_UNARY,
             {% elif not method.client_streaming and method.server_streaming %}
@@ -245,6 +255,7 @@ class {{ service.py_name }}Base(ServiceBase):
             {% else %}
             grpclib.const.Cardinality.STREAM_STREAM,
             {% endif %}
+
             {{ method.py_input_message_type }},
             {{ method.py_output_message_type }},
         ),
