@@ -386,7 +386,6 @@ this to work.
 
 ## Development
 
-- _Join us on [Slack](https://join.slack.com/t/betterproto/shared_invite/zt-f0n0uolx-iN8gBNrkPxtKHTLpG3o1OQ)!_
 - _See how you can help &rarr; [Contributing](.github/CONTRIBUTING.md)_
 
 ### Requirements
@@ -527,7 +526,7 @@ protoc \
 - [ ] Add *Reflections* chapter to README
 - [ ] Return original folder structure
   - [ ] Automatically import *_pb2 for reflections
-- [ ] Pass metadata to Service methods
+- [x] Pass metadata to Service methods
 - [ ] Fix comments in generated code
 - [ ] Omit Empty argument from Stub and Service
 
