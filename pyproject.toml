@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bananaproto"
-version = "1.0.0"
+version = "1.1.0"
 description = "A BANANA Protobuf / gRPC generator & library"
 authors = ["Daniel G. Taylor <danielgtaylor@gmail.com>"]
 maintainers = ["BananaLoaf <bananaloaf@protonmail.com>"]
