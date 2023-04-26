@@ -505,7 +505,9 @@ def test_oneof_default_value_set_causes_writes_wire():
 
 
 def test_recursive_message():
-    from tests.inputs.recursivemessage.output_bananaproto.recursivemessage import Test as RecursiveMessage
+    from tests.inputs.recursivemessage.output_bananaproto.recursivemessage import (
+        Test as RecursiveMessage,
+    )
 
     msg = RecursiveMessage()
 

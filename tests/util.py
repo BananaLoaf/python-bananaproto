@@ -35,7 +35,7 @@ def get_files(path, suffix: str) -> Generator[str, None, None]:
 
 
 def get_directories(path):
-    for p in path.glob('*'):
+    for p in path.glob("*"):
         if p.is_dir():
             yield p.name
 

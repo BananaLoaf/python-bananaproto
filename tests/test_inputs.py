@@ -134,7 +134,7 @@ def test_data(request, reset_sys_path):
     test_case_name = request.param
 
     reference_module_root = os.path.join(
-        *reference_output_package.format(test_case_name=test_case_name).split('.')
+        *reference_output_package.format(test_case_name=test_case_name).split(".")
     )
     sys.path.append(reference_module_root)
 
@@ -154,7 +154,7 @@ def test_data(request, reset_sys_path):
         TestData(
             plugin_module=plugin_module_entry_point,
             reference_module=lambda: importlib.import_module(
-                 f"{reference_output_package.format(test_case_name=test_case_name)}.{test_case_name}_pb2",
+                f"{reference_output_package.format(test_case_name=test_case_name)}.{test_case_name}_pb2",
             ),
             json_data=get_test_case_json_data(test_case_name),
         )
