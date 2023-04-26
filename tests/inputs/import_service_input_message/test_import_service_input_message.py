@@ -1,13 +1,13 @@
 import pytest
 
 from tests.mocks import MockChannel
-from tests.output_bananaproto.import_service_input_message import (
+from tests.inputs.import_service_input_message.output_bananaproto.import_service_input_message import (
     NestedRequestMessage,
     RequestMessage,
     RequestResponse,
     TestStub,
 )
-from tests.output_bananaproto.import_service_input_message.child import (
+from tests.inputs.import_service_input_message.output_bananaproto.import_service_input_message.child import (
     ChildRequestMessage,
 )
 

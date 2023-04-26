@@ -1,6 +1,6 @@
 import bananaproto
-from tests.output_bananaproto.oneof import Test
-from tests.output_bananaproto_pydantic.oneof import Test as TestPyd
+from tests.inputs.oneof.output_bananaproto.oneof import Test
+from tests.inputs.oneof.output_bananaproto_pydantic.oneof import Test as TestPyd
 from tests.util import get_test_case_json_data
 
 

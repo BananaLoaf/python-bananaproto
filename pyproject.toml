@@ -77,7 +77,9 @@ help  = "Benchmark current commit vs. master branch"
 cmd  = """
 rm -rf .asv .coverage .mypy_cache .pytest_cache
        dist bananaproto.egg-info **/__pycache__
-       testsoutput_*
+       testsoutput_* **/output_bananaproto
+       **/output_bananaproto_pydantic
+       **/output_reference
 """
 help = "Clean out generated files from the workspace"
 

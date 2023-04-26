@@ -1,4 +1,4 @@
-from tests.output_bananaproto.casing_message_field_uppercase import Test
+from tests.inputs.casing_message_field_uppercase.output_bananaproto.casing_message_field_uppercase import Test
 
 
 def test_message_casing():

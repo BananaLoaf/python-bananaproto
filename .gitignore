@@ -6,7 +6,9 @@
 .pytest_cache
 .python-version
 build/
-tests/output_*
+output_bananaproto
+output_bananaproto_pydantic
+output_reference
 **/__pycache__
 dist
 **/*.egg-info

@@ -10,7 +10,7 @@ import pytest
 from grpclib.testing import ChannelFor
 
 from bananaproto.grpc.util.async_channel import AsyncChannel
-from tests.output_bananaproto.service import (
+from tests.inputs.service.output_bananaproto.service import (
     DoThingRequest,
     DoThingResponse,
     GetThingRequest,

@@ -1,7 +1,7 @@
 import pytest
 
 import bananaproto
-from tests.output_bananaproto.oneof_enum import (
+from tests.inputs.oneof_enum.output_bananaproto.oneof_enum import (
     Move,
     Signal,
     Test,

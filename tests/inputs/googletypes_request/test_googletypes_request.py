@@ -11,7 +11,7 @@ import pytest
 
 import bananaproto.lib.google.protobuf as protobuf
 from tests.mocks import MockChannel
-from tests.output_bananaproto.googletypes_request import (
+from tests.inputs.googletypes_request.output_bananaproto.googletypes_request import (
     Input,
     TestStub,
 )

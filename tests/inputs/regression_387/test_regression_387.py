@@ -1,4 +1,4 @@
-from tests.output_bananaproto.regression_387 import (
+from tests.inputs.regression_387.output_bananaproto.regression_387 import (
     ParentElement,
     Test,
 )

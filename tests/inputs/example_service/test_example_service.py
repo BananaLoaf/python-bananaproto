@@ -7,7 +7,7 @@ import pytest
 from grpclib.testing import ChannelFor
 
 from bananaproto.grpc.grpclib_client import MetadataLike
-from tests.output_bananaproto.example_service import (
+from tests.inputs.example_service.output_bananaproto.example_service import (
     ExampleRequest,
     ExampleResponse,
     TestBase,

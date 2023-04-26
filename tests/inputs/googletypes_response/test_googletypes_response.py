@@ -8,7 +8,7 @@ import pytest
 
 import bananaproto.lib.google.protobuf as protobuf
 from tests.mocks import MockChannel
-from tests.output_bananaproto.googletypes_response import (
+from tests.inputs.googletypes_response.output_bananaproto.googletypes_response import (
     Input,
     TestStub,
 )

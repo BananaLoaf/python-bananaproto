@@ -70,8 +70,8 @@ test_cases = TestCases(
     xfail=test_input_config.xfail,
 )
 
-plugin_output_package = "tests.output_bananaproto"
-reference_output_package = "tests.output_reference"
+plugin_output_package = "tests.inputs.{test_case_name}.output_bananaproto"
+reference_output_package = "tests.inputs.{test_case_name}.output_reference"
 
 TestData = namedtuple("TestData", ["plugin_module", "reference_module", "json_data"])
 
@@ -134,11 +134,13 @@ def test_data(request, reset_sys_path):
     test_case_name = request.param
 
     reference_module_root = os.path.join(
-        *reference_output_package.split("."), test_case_name
+        *reference_output_package.format(test_case_name=test_case_name).split('.')
     )
     sys.path.append(reference_module_root)
 
-    plugin_module = importlib.import_module(f"{plugin_output_package}.{test_case_name}")
+    plugin_module = importlib.import_module(
+        plugin_output_package.format(test_case_name=test_case_name)
+    )
 
     plugin_module_entry_point = find_module(plugin_module, module_has_entry_point)
 
@@ -152,7 +154,7 @@ def test_data(request, reset_sys_path):
         TestData(
             plugin_module=plugin_module_entry_point,
             reference_module=lambda: importlib.import_module(
-                f"{reference_output_package}.{test_case_name}.{test_case_name}_pb2"
+                 f"{reference_output_package.format(test_case_name=test_case_name)}.{test_case_name}_pb2",
             ),
             json_data=get_test_case_json_data(test_case_name),
         )

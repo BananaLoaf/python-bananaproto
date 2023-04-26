@@ -1,4 +1,4 @@
-from tests.output_bananaproto.proto3_field_presence_oneof import (
+from tests.inputs.proto3_field_presence_oneof.output_bananaproto.proto3_field_presence_oneof import (
     InnerNested,
     Nested,
     Test,
