@@ -7,11 +7,11 @@ from typing import (
 import pytest
 
 import bananaproto.lib.google.protobuf as protobuf
-from tests.mocks import MockChannel
 from tests.inputs.googletypes_response.output_bananaproto.googletypes_response import (
     Input,
     TestStub,
 )
+from tests.mocks import MockChannel
 
 
 test_cases = [

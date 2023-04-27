@@ -1,6 +1,5 @@
 import pytest
 
-from tests.mocks import MockChannel
 from tests.inputs.import_service_input_message.output_bananaproto.import_service_input_message import (
     NestedRequestMessage,
     RequestMessage,
@@ -10,6 +9,7 @@ from tests.inputs.import_service_input_message.output_bananaproto.import_service
 from tests.inputs.import_service_input_message.output_bananaproto.import_service_input_message.child import (
     ChildRequestMessage,
 )
+from tests.mocks import MockChannel
 
 
 @pytest.mark.asyncio

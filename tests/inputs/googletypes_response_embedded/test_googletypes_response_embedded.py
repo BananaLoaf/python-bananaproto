@@ -1,11 +1,11 @@
 import pytest
 
-from tests.mocks import MockChannel
 from tests.inputs.googletypes_response_embedded.output_bananaproto.googletypes_response_embedded import (
     Input,
     Output,
     TestStub,
 )
+from tests.mocks import MockChannel
 
 
 @pytest.mark.asyncio
