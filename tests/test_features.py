@@ -505,7 +505,9 @@ def test_oneof_default_value_set_causes_writes_wire():
 
 
 def test_recursive_message():
-    from tests.output_bananaproto.recursivemessage import Test as RecursiveMessage
+    from tests.inputs.recursivemessage.output_bananaproto.recursivemessage import (
+        Test as RecursiveMessage,
+    )
 
     msg = RecursiveMessage()
 
@@ -519,7 +521,7 @@ def test_recursive_message():
 
 
 def test_recursive_message_defaults():
-    from tests.output_bananaproto.recursivemessage import (
+    from tests.inputs.recursivemessage.output_bananaproto.recursivemessage import (
         Intermediate,
         Test as RecursiveMessage,
     )
@@ -546,7 +548,7 @@ def test_recursive_message_defaults():
 
 
 def test_message_repr():
-    from tests.output_bananaproto.recursivemessage import Test
+    from tests.inputs.recursivemessage.output_bananaproto.recursivemessage import Test
 
     assert repr(Test(name="Loki")) == "Test(name='Loki')"
     assert repr(Test(child=Test(), name="Loki")) == "Test(name='Loki', child=Test())"
@@ -650,7 +652,7 @@ def test_iso_datetime_list():
 
 
 def test_service_argument__expected_parameter():
-    from tests.output_bananaproto.service import (
+    from tests.inputs.service.output_bananaproto.service import (
         DoThingRequest,
         TestStub,
     )

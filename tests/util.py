@@ -23,9 +23,9 @@ os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
 
 root_path = Path(__file__).resolve().parent
 inputs_path = root_path.joinpath("inputs")
-output_path_reference = root_path.joinpath("output_reference")
-output_path_bananaproto = root_path.joinpath("output_bananaproto")
-output_path_bananaproto_pydantic = root_path.joinpath("output_bananaproto_pydantic")
+output_path_reference = "output_reference"
+output_path_bananaproto = "output_bananaproto"
+output_path_bananaproto_pydantic = "output_bananaproto_pydantic"
 
 
 def get_files(path, suffix: str) -> Generator[str, None, None]:
@@ -35,8 +35,9 @@ def get_files(path, suffix: str) -> Generator[str, None, None]:
 
 
 def get_directories(path):
-    for root, directories, files in os.walk(path):
-        yield from directories
+    for p in path.glob("*"):
+        if p.is_dir():
+            yield p.name
 
 
 async def protoc(

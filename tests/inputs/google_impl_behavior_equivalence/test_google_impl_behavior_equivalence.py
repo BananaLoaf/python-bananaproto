@@ -2,11 +2,11 @@ import pytest
 from google.protobuf import json_format
 
 import bananaproto
-from tests.output_bananaproto.google_impl_behavior_equivalence import (
+from tests.inputs.google_impl_behavior_equivalence.output_bananaproto.google_impl_behavior_equivalence import (
     Foo,
     Test,
 )
-from tests.output_reference.google_impl_behavior_equivalence.google_impl_behavior_equivalence_pb2 import (
+from tests.inputs.google_impl_behavior_equivalence.output_reference.google_impl_behavior_equivalence_pb2 import (
     Foo as ReferenceFoo,
     Test as ReferenceTest,
 )

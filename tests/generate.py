@@ -79,9 +79,15 @@ async def generate_test_case_output(
     Returns the max of the subprocess return values
     """
 
-    test_case_output_path_reference = output_path_reference.joinpath(test_case_name)
-    test_case_output_path_bananaproto = output_path_bananaproto
-    test_case_output_path_bananaproto_pyd = output_path_bananaproto_pydantic
+    test_case_output_path_reference = test_case_input_path.joinpath(
+        output_path_reference
+    )
+    test_case_output_path_bananaproto = test_case_input_path.joinpath(
+        output_path_bananaproto
+    )
+    test_case_output_path_bananaproto_pyd = test_case_input_path.joinpath(
+        output_path_bananaproto_pydantic
+    )
 
     os.makedirs(test_case_output_path_reference, exist_ok=True)
     os.makedirs(test_case_output_path_bananaproto, exist_ok=True)

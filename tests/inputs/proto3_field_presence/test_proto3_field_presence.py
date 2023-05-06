@@ -1,6 +1,6 @@
 import json
 
-from tests.output_bananaproto.proto3_field_presence import (
+from tests.inputs.proto3_field_presence.output_bananaproto.proto3_field_presence import (
     InnerTest,
     Test,
     TestEnum,

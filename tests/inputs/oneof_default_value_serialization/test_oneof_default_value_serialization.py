@@ -3,7 +3,7 @@ import datetime
 import pytest
 
 import bananaproto
-from tests.output_bananaproto.oneof_default_value_serialization import (
+from tests.inputs.oneof_default_value_serialization.output_bananaproto.oneof_default_value_serialization import (
     Message,
     NestedMessage,
     Test,

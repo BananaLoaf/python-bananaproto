@@ -1,4 +1,4 @@
-from tests.output_bananaproto.enum import (
+from tests.inputs.enum.output_bananaproto.enum import (
     Choice,
     Test,
 )
