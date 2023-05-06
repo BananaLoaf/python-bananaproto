@@ -1,8 +1,6 @@
 name: Publish
 on:
   push:
-    branches:
-      - master
     tags:
       - "v*"
 jobs:
@@ -11,9 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Check if master
-        if: endsWith(github.ref, 'master') == false
-        run: exit -1
 
       - uses: actions/setup-python@v4
         with:
@@ -30,7 +25,7 @@ jobs:
         env:
           POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
         run: |
-          git fetch --unshallow --tags
+          git fetch --unshallow --tags --force
           git checkout tags/$(git describe --tags --abbrev=0)
           poetry version $(git describe --tags --abbrev=0)
           poetry publish --build

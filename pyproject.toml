@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bananaproto"
-version = "1.1.0"
+version = "0.0.0"
 description = "A BANANA Protobuf / gRPC generator & library"
 authors = ["Daniel G. Taylor <danielgtaylor@gmail.com>"]
 maintainers = ["BananaLoaf <bananaloaf@protonmail.com>"]
@@ -38,6 +38,8 @@ tomlkit = "^0.7.0"
 tox = "^3.15.1"
 pre-commit = "^2.17.0"
 pydantic = ">=1.8.0"
+black = ">=19.3b0"
+isort = "^5.11.5"
 
 
 [tool.poetry.scripts]

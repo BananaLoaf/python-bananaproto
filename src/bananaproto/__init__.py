@@ -37,7 +37,6 @@ from typing import (
 from dateutil.parser import isoparse
 
 from ._types import T
-from ._version import __version__
 from .casing import (
     camel_case,
     safe_snake_case,
