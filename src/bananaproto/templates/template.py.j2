@@ -16,20 +16,6 @@ else:
 from dataclasses import dataclass
 {% endif %}
 
-{% if output_file.datetime_imports %}
-from datetime import {% for i in output_file.datetime_imports|sort %}{{ i }}{% if not loop.last %}, {% endif %}{% endfor %}
-
-{% endif%}
-{% if output_file.typing_imports %}
-from typing import {% for i in output_file.typing_imports|sort %}{{ i }}{% if not loop.last %}, {% endif %}{% endfor %}
-
-{% endif %}
-
-{% if output_file.pydantic_imports %}
-from pydantic import {% for i in output_file.pydantic_imports|sort %}{{ i }}{% if not loop.last %}, {% endif %}{% endfor %}
-
-{% endif %}
-
 import bananaproto
 {% if output_file.services %}
 from bananaproto.grpc.grpclib_server import ServiceBase

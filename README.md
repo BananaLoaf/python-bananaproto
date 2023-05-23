@@ -527,11 +527,13 @@ protoc \
 - [x] Non-string type hint
 - [ ] Add *Reflections* chapter to README
 - [ ] Return original folder structure
-  - [ ] Automatically import *_pb2 for reflections
+- [ ] Automatically import *_pb2 for reflections
 - [x] Pass metadata to Service methods
 - [ ] Fix comments in generated code
 - [ ] Omit Empty argument from Stub and Service
 - [ ] When exception is raised in service method, raise gRPC error
+- [ ] Auto sync-ify async methods
+- [ ] Remove Pydantic, I don't like all the extra code
 
 ## License
 
