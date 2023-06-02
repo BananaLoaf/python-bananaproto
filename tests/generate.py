@@ -11,7 +11,6 @@ from tests.util import (
     get_directories,
     inputs_path,
     output_path_bananaproto,
-    output_path_bananaproto_pydantic,
     output_path_reference,
     protoc,
 )
@@ -85,13 +84,9 @@ async def generate_test_case_output(
     test_case_output_path_bananaproto = test_case_input_path.joinpath(
         output_path_bananaproto
     )
-    test_case_output_path_bananaproto_pyd = test_case_input_path.joinpath(
-        output_path_bananaproto_pydantic
-    )
 
     os.makedirs(test_case_output_path_reference, exist_ok=True)
     os.makedirs(test_case_output_path_bananaproto, exist_ok=True)
-    os.makedirs(test_case_output_path_bananaproto_pyd, exist_ok=True)
 
     clear_directory(test_case_output_path_reference)
     clear_directory(test_case_output_path_bananaproto)
@@ -99,13 +94,9 @@ async def generate_test_case_output(
     (
         (ref_out, ref_err, ref_code),
         (plg_out, plg_err, plg_code),
-        (plg_out_pyd, plg_err_pyd, plg_code_pyd),
     ) = await asyncio.gather(
         protoc(test_case_input_path, test_case_output_path_reference, True),
         protoc(test_case_input_path, test_case_output_path_bananaproto, False),
-        protoc(
-            test_case_input_path, test_case_output_path_bananaproto_pyd, False, True
-        ),
     )
 
     if ref_code == 0:
@@ -144,27 +135,7 @@ async def generate_test_case_output(
             sys.stderr.buffer.write(plg_err)
             sys.stderr.buffer.flush()
 
-    if plg_code_pyd == 0:
-        print(
-            f"\033[31;1;4mGenerated plugin (pydantic compatible) output for {test_case_name!r}\033[0m"
-        )
-    else:
-        print(
-            f"\033[31;1;4mFailed to generate plugin (pydantic compatible) output for {test_case_name!r}\033[0m"
-        )
-
-    if verbose:
-        if plg_out_pyd:
-            print("Plugin stdout:")
-            sys.stdout.buffer.write(plg_out_pyd)
-            sys.stdout.buffer.flush()
-
-        if plg_err_pyd:
-            print("Plugin stderr:")
-            sys.stderr.buffer.write(plg_err_pyd)
-            sys.stderr.buffer.flush()
-
-    return max(ref_code, plg_code, plg_code_pyd)
+    return max(ref_code, plg_code)
 
 
 HELP = "\n".join(

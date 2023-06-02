@@ -249,7 +249,6 @@ class OutputTemplate:
     enums: List["EnumDefinitionCompiler"] = field(default_factory=list)
     services: List["ServiceCompiler"] = field(default_factory=list)
     imports_type_checking_only: Set[str] = field(default_factory=set)
-    pydantic_dataclasses: bool = False
     output: bool = True
 
     @property
@@ -421,10 +420,6 @@ class FieldCompiler(MessageCompiler):
         return args
 
     @property
-    def pydantic_imports(self) -> Set[str]:
-        return set()
-
-    @property
     def use_builtins(self) -> bool:
         return self.py_type in self.parent.builtins_types or (
             self.py_type == self.py_name and self.py_name in dir(builtins)
@@ -445,9 +440,6 @@ class FieldCompiler(MessageCompiler):
             output_file.imports.add("from typing import List")
         if "Dict[" in self.annotation:
             output_file.imports.add("from typing import Dict")
-
-        # pydantic_imports
-        output_file.imports.update(self.pydantic_imports)
 
         # builtins_import
         output_file.builtins_import = output_file.builtins_import or self.use_builtins
@@ -578,20 +570,6 @@ class OneOfFieldCompiler(FieldCompiler):
         group = self.parent.proto_obj.oneof_decl[self.proto_obj.oneof_index].name
         args.append(f'group="{group}"')
         return args
-
-
-@dataclass
-class PydanticOneOfFieldCompiler(OneOfFieldCompiler):
-    @property
-    def optional(self) -> bool:
-        # Force the optional to be True. This will allow the pydantic dataclass
-        # to validate the object correctly by allowing the field to be let empty.
-        # We add a pydantic validator later to ensure exactly one field is defined.
-        return True
-
-    @property
-    def pydantic_imports(self) -> Set[str]:
-        return {"from pydantic import root_validator"}
 
 
 @dataclass

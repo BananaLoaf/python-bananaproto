@@ -16,7 +16,6 @@ This project aims to provide an improved experience when using Protobuf / gRPC i
   - Timezone-aware `datetime` and `timedelta` objects
   - Relative imports
   - Mypy type checking
-- [Pydantic Models](https://docs.pydantic.dev/) generation (see #generating-pydantic-models)
 
 This project is heavily inspired by, and borrows functionality from:
 
@@ -367,24 +366,6 @@ datetime.datetime(2019, 1, 1, 11, 59, 58, 800000, tzinfo=datetime.timezone.utc)
 {'ts': '2019-01-01T12:00:00Z', 'duration': '1.200s'}
 ```
 
-## Generating Pydantic Models
-
-You can use python-bananaproto to generate pydantic based models, using
-pydantic dataclasses. This means the results of the protobuf unmarshalling will
-be typed checked. The usage is the same, but you need to add a custom option
-when calling the protobuf compiler:
-
-
-```
-protoc -I . --custom_opt=pydantic_dataclasses --python_bananaproto_out=lib example.proto
-```
-
-With the important change being `--custom_opt=pydantic_dataclasses`. This will
-swap the dataclass implementation from the builtin python dataclass to the
-pydantic dataclass. You must have pydantic as a dependency in your project for
-this to work.
-
-
 
 ## Development
 
@@ -533,7 +514,7 @@ protoc \
 - [ ] Omit Empty argument from Stub and Service
 - [ ] When exception is raised in service method, raise gRPC error
 - [ ] Auto sync-ify async methods
-- [ ] Remove Pydantic, I don't like all the extra code
+- [x] Remove Pydantic, I don't like all the extra code
 
 ## License
 
