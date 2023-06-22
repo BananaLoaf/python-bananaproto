@@ -130,7 +130,9 @@ def get_test_case_json_data(
             continue
         with test_data_file_path.open("r") as fh:
             result.append(
-                TestCaseJsonFile(fh.read(), test_case_name, test_data_file_path.stem)
+                TestCaseJsonFile(
+                    fh.read(), test_case_name, test_data_file_path.name.split(".")[0]
+                )
             )
 
     return result
