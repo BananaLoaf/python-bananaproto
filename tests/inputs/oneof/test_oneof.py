@@ -1,6 +1,5 @@
 import bananaproto
 from tests.inputs.oneof.output_bananaproto.oneof import Test
-from tests.inputs.oneof.output_bananaproto_pydantic.oneof import Test as TestPyd
 from tests.util import get_test_case_json_data
 
 
@@ -13,9 +12,4 @@ def test_which_count():
 def test_which_name():
     message = Test()
     message.from_json(get_test_case_json_data("oneof", "oneof_name.json")[0].json)
-    assert bananaproto.which_one_of(message, "foo") == ("pitier", "Mr. T")
-
-
-def test_which_count_pyd():
-    message = TestPyd(pitier="Mr. T", just_a_regular_field=2, bar_name="a_bar")
     assert bananaproto.which_one_of(message, "foo") == ("pitier", "Mr. T")

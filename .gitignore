@@ -7,7 +7,6 @@
 .python-version
 build/
 output_bananaproto
-output_bananaproto_pydantic
 output_reference
 **/__pycache__
 dist

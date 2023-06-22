@@ -244,15 +244,11 @@ class OutputTemplate:
     package_proto_obj: FileDescriptorProto
     input_files: List[str] = field(default_factory=list)
     imports: Set[str] = field(default_factory=set)
-    datetime_imports: Set[str] = field(default_factory=set)
-    typing_imports: Set[str] = field(default_factory=set)
-    pydantic_imports: Set[str] = field(default_factory=set)
     builtins_import: bool = False
     messages: List["MessageCompiler"] = field(default_factory=list)
     enums: List["EnumDefinitionCompiler"] = field(default_factory=list)
     services: List["ServiceCompiler"] = field(default_factory=list)
     imports_type_checking_only: Set[str] = field(default_factory=set)
-    pydantic_dataclasses: bool = False
     output: bool = True
 
     @property
@@ -424,43 +420,31 @@ class FieldCompiler(MessageCompiler):
         return args
 
     @property
-    def datetime_imports(self) -> Set[str]:
-        imports = set()
-        annotation = self.annotation
-        # FIXME: false positives - e.g. `MyDatetimedelta`
-        if "timedelta" in annotation:
-            imports.add("timedelta")
-        if "datetime" in annotation:
-            imports.add("datetime")
-        return imports
-
-    @property
-    def typing_imports(self) -> Set[str]:
-        imports = set()
-        annotation = self.annotation
-        if "Optional[" in annotation:
-            imports.add("Optional")
-        if "List[" in annotation:
-            imports.add("List")
-        if "Dict[" in annotation:
-            imports.add("Dict")
-        return imports
-
-    @property
-    def pydantic_imports(self) -> Set[str]:
-        return set()
-
-    @property
     def use_builtins(self) -> bool:
         return self.py_type in self.parent.builtins_types or (
             self.py_type == self.py_name and self.py_name in dir(builtins)
         )
 
     def add_imports_to(self, output_file: OutputTemplate) -> None:
-        output_file.datetime_imports.update(self.datetime_imports)
-        output_file.typing_imports.update(self.typing_imports)
-        output_file.pydantic_imports.update(self.pydantic_imports)
+        # datetime_imports
+        # FIXME: false positives - e.g. `MyDatetimedelta`
+        if "timedelta" in self.annotation:
+            output_file.imports.add("from datetime import timedelta")
+        if "datetime" in self.annotation:
+            output_file.imports.add("from datetime import datetime")
+
+        # typing_imports
+        if "Optional[" in self.annotation:
+            output_file.imports.add("from typing import Optional")
+        if "List[" in self.annotation:
+            output_file.imports.add("from typing import List")
+        if "Dict[" in self.annotation:
+            output_file.imports.add("from typing import Dict")
+
+        # builtins_import
         output_file.builtins_import = output_file.builtins_import or self.use_builtins
+        if output_file.builtins_import or self.use_builtins:
+            output_file.imports.add("import builtins")
 
     @property
     def field_wraps(self) -> Optional[str]:
@@ -589,20 +573,6 @@ class OneOfFieldCompiler(FieldCompiler):
 
 
 @dataclass
-class PydanticOneOfFieldCompiler(OneOfFieldCompiler):
-    @property
-    def optional(self) -> bool:
-        # Force the optional to be True. This will allow the pydantic dataclass
-        # to validate the object correctly by allowing the field to be let empty.
-        # We add a pydantic validator later to ensure exactly one field is defined.
-        return True
-
-    @property
-    def pydantic_imports(self) -> Set[str]:
-        return {"root_validator"}
-
-
-@dataclass
 class MapEntryCompiler(FieldCompiler):
     py_k_type: Type = PLACEHOLDER
     py_v_type: Type = PLACEHOLDER
@@ -699,7 +669,7 @@ class ServiceCompiler(ProtoContentBase):
     def __post_init__(self) -> None:
         # Add service to output file
         self.output_file.services.append(self)
-        self.output_file.typing_imports.add("Dict")
+        self.output_file.imports.add("from typing import Dict")
         super().__post_init__()  # check for unset fields
 
     @property
@@ -724,22 +694,22 @@ class ServiceMethodCompiler(ProtoContentBase):
 
         # Check for imports
         if "Optional" in self.py_input_message_type:
-            self.output_file.typing_imports.add("Optional")
+            self.output_file.imports.add("from typing import Optional")
         if "Optional" in self.py_output_message_type:
-            self.output_file.typing_imports.add("Optional")
+            self.output_file.imports.add("from typing import Optional")
 
         # Check for Async imports
         if self.client_streaming:
-            self.output_file.typing_imports.add("AsyncIterable")
-            self.output_file.typing_imports.add("Iterable")
-            self.output_file.typing_imports.add("Union")
+            self.output_file.imports.add("from typing import AsyncIterable")
+            self.output_file.imports.add("from typing import Iterable")
+            self.output_file.imports.add("from typing import Union")
 
         # Required by both client and server
         if self.client_streaming or self.server_streaming:
-            self.output_file.typing_imports.add("AsyncIterator")
+            self.output_file.imports.add("from typing import AsyncIterator")
 
         # add imports required for request arguments timeout, deadline and metadata
-        self.output_file.typing_imports.add("Optional")
+        self.output_file.imports.add("from typing import Optional")
         self.output_file.imports_type_checking_only.add("import grpclib.server")
         self.output_file.imports.add(
             "from bananaproto.grpc.grpclib_client import MetadataLike"

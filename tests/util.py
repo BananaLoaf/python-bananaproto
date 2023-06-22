@@ -25,7 +25,6 @@ root_path = Path(__file__).resolve().parent
 inputs_path = root_path.joinpath("inputs")
 output_path_reference = "output_reference"
 output_path_bananaproto = "output_bananaproto"
-output_path_bananaproto_pydantic = "output_bananaproto_pydantic"
 
 
 def get_files(path, suffix: str) -> Generator[str, None, None]:
@@ -44,53 +43,19 @@ async def protoc(
     path: Union[str, Path],
     output_dir: Union[str, Path],
     reference: bool = False,
-    pydantic_dataclasses: bool = False,
 ):
     path: Path = Path(path).resolve()
     output_dir: Path = Path(output_dir).resolve()
     python_out_option: str = "python_bananaproto_out" if not reference else "python_out"
 
-    if pydantic_dataclasses:
-        plugin_path = Path("src/bananaproto/plugin/main.py")
-
-        if "Win" in platform.system():
-            with tempfile.NamedTemporaryFile(
-                "w", encoding="UTF-8", suffix=".bat", delete=False
-            ) as tf:
-                # See https://stackoverflow.com/a/42622705
-                tf.writelines(
-                    [
-                        "@echo off",
-                        f"\nchdir {os.getcwd()}",
-                        f"\n{sys.executable} -u {plugin_path.as_posix()}",
-                    ]
-                )
-
-                tf.flush()
-
-                plugin_path = Path(tf.name)
-                atexit.register(os.remove, plugin_path)
-
-        command = [
-            sys.executable,
-            "-m",
-            "grpc.tools.protoc",
-            f"--plugin=protoc-gen-custom={plugin_path.as_posix()}",
-            "--experimental_allow_proto3_optional",
-            "--custom_opt=pydantic_dataclasses",
-            f"--proto_path={path.as_posix()}",
-            f"--custom_out={output_dir.as_posix()}",
-            *[p.as_posix() for p in path.glob("*.proto")],
-        ]
-    else:
-        command = [
-            sys.executable,
-            "-m",
-            "grpc.tools.protoc",
-            f"--proto_path={path.as_posix()}",
-            f"--{python_out_option}={output_dir.as_posix()}",
-            *[p.as_posix() for p in path.glob("*.proto")],
-        ]
+    command = [
+        sys.executable,
+        "-m",
+        "grpc.tools.protoc",
+        f"--proto_path={path.as_posix()}",
+        f"--{python_out_option}={output_dir.as_posix()}",
+        *[p.as_posix() for p in path.glob("*.proto")],
+    ]
     proc = await asyncio.create_subprocess_exec(
         *command, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
     )
@@ -130,9 +95,7 @@ def get_test_case_json_data(
             continue
         with test_data_file_path.open("r") as fh:
             result.append(
-                TestCaseJsonFile(
-                    fh.read(), test_case_name, test_data_file_path.name.split(".")[0]
-                )
+                TestCaseJsonFile(fh.read(), test_case_name, test_data_file_path.stem)
             )
 
     return result

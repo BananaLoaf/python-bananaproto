@@ -31,7 +31,6 @@ from .models import (
     OneOfFieldCompiler,
     OutputTemplate,
     PluginRequestCompiler,
-    PydanticOneOfFieldCompiler,
     ServiceCompiler,
     ServiceMethodCompiler,
     is_map,
@@ -93,11 +92,6 @@ def generate_code(request: CodeGeneratorRequest) -> CodeGeneratorResponse:
             # skip outputting Google's well-known types
             request_data.output_packages[output_package_name].output = False
 
-        if "pydantic_dataclasses" in plugin_options:
-            request_data.output_packages[
-                output_package_name
-            ].pydantic_dataclasses = True
-
     # Read Messages and Enums
     # We need to read Messages before Services in so that we can
     # get the references to input/output messages for each service
@@ -152,23 +146,6 @@ def generate_code(request: CodeGeneratorRequest) -> CodeGeneratorResponse:
     return response
 
 
-def _make_one_of_field_compiler(
-    output_package: OutputTemplate,
-    source_file: "FileDescriptorProto",
-    parent: MessageCompiler,
-    proto_obj: "FieldDescriptorProto",
-    path: List[int],
-) -> FieldCompiler:
-    pydantic = output_package.pydantic_dataclasses
-    Cls = PydanticOneOfFieldCompiler if pydantic else OneOfFieldCompiler
-    return Cls(
-        source_file=source_file,
-        parent=parent,
-        proto_obj=proto_obj,
-        path=path,
-    )
-
-
 def read_protobuf_type(
     item: DescriptorProto,
     path: List[int],
@@ -192,8 +169,11 @@ def read_protobuf_type(
                     path=path + [2, index],
                 )
             elif is_oneof(field):
-                _make_one_of_field_compiler(
-                    output_package, source_file, message_data, field, path + [2, index]
+                OneOfFieldCompiler(
+                    source_file=source_file,
+                    parent=message_data,
+                    proto_obj=field,
+                    path=path + [2, index],
                 )
             else:
                 FieldCompiler(
