@@ -181,17 +181,26 @@ class {{ service.py_name }}Base(ServiceBase):
         {% else %}
         request = stream.__aiter__()
         {% endif %}
-        {% if not method.server_streaming %}
-        response = await self.{{ method.py_name }}(request, stream.metadata)
-        await stream.send_message(response)
-        {% else %}
-        await self._call_rpc_handler_server_stream(
-            self.{{ method.py_name }},
-            stream,
-            request,
-            stream.metadata,
-        )
-        {% endif %}
+        try:
+            {% if not method.server_streaming %}
+            response = await self.{{ method.py_name }}(request, stream.metadata)
+            await stream.send_message(response)
+            {% else %}
+            await self._call_rpc_handler_server_stream(
+                self.{{ method.py_name }},
+                stream,
+                request,
+                stream.metadata,
+            )
+            {% endif %}
+        except grpclib.GRPCError:
+            raise
+        except Exception as exc:
+            await stream.send_trailing_metadata(
+                status=grpclib.const.Status.INTERNAL,
+                status_message=f'{exc.__class__.__name__}: {exc}',
+            )
+            raise
 
     {% endfor %}
 
