@@ -14,10 +14,13 @@ from bananaproto.plugin.parser import generate_code
 
 def main() -> None:
     """The plugin's main entry point."""
-    # Read request message from stdin
-    if bin_file := os.getenv("BANANAPROTO_DEBUG"):
+
+    bin_file = os.getenv("BANANAPROTO_DEBUG")
+    # Read request message from file
+    if bin_file:
         with Path(bin_file).open("rb") as file:
             data = file.read()
+    # Read request message from stdin
     else:
         data = sys.stdin.buffer.read()
 
