@@ -1,7 +1,4 @@
-from typing import (
-    AsyncIterable,
-    AsyncIterator,
-)
+from typing import AsyncIterator
 
 import pytest
 from grpclib.testing import ChannelFor
@@ -24,7 +21,6 @@ class ExampleService(TestBase):
         return ExampleResponse(
             example_string=example_request.example_string,
             example_integer=example_request.example_integer,
-            example_metadata_field=metadata.get("field", ""),
         )
 
     async def example_unary_stream(
@@ -35,7 +31,6 @@ class ExampleService(TestBase):
         response = ExampleResponse(
             example_string=example_request.example_string,
             example_integer=example_request.example_integer,
-            example_metadata_field=metadata.get("field", ""),
         )
         yield response
         yield response
@@ -50,7 +45,6 @@ class ExampleService(TestBase):
             return ExampleResponse(
                 example_string=example_request.example_string,
                 example_integer=example_request.example_integer,
-                example_metadata_field=metadata.get("field", ""),
             )
 
     async def example_stream_stream(
@@ -62,7 +56,6 @@ class ExampleService(TestBase):
             yield ExampleResponse(
                 example_string=example_request.example_string,
                 example_integer=example_request.example_integer,
-                example_metadata_field=metadata.get("field", ""),
             )
 
 
@@ -97,71 +90,3 @@ async def test_calls_with_different_cardinalities():
         async for response in stub.example_stream_stream(request_iterator()):
             assert response.example_string == example_request.example_string
             assert response.example_integer == example_request.example_integer
-
-
-@pytest.mark.asyncio
-async def test_stub_metadata():
-    example_request = ExampleRequest()
-    stub_metadata = {"field": "1"}
-
-    async with ChannelFor([ExampleService()]) as channel:
-        stub = TestStub(channel, metadata=stub_metadata)
-
-        # unary unary
-        response = await stub.example_unary_unary(example_request)
-        assert response.example_metadata_field == stub_metadata["field"]
-
-        # unary stream
-        async for response in stub.example_unary_stream(example_request):
-            assert response.example_metadata_field == stub_metadata["field"]
-
-        # stream unary
-        async def request_iterator():
-            yield example_request
-            yield example_request
-            yield example_request
-
-        response = await stub.example_stream_unary(request_iterator())
-        assert response.example_metadata_field == stub_metadata["field"]
-
-        # stream stream
-        async for response in stub.example_stream_stream(request_iterator()):
-            assert response.example_metadata_field == stub_metadata["field"]
-
-
-@pytest.mark.asyncio
-async def test_method_metadata():
-    example_request = ExampleRequest()
-    method_metadata = {"field": "2"}
-
-    async with ChannelFor([ExampleService()]) as channel:
-        stub = TestStub(channel)
-
-        # unary unary
-        response = await stub.example_unary_unary(
-            example_request, metadata=method_metadata
-        )
-        assert response.example_metadata_field == method_metadata["field"]
-
-        # unary stream
-        async for response in stub.example_unary_stream(
-            example_request, metadata=method_metadata
-        ):
-            assert response.example_metadata_field == method_metadata["field"]
-
-        # stream unary
-        async def request_iterator():
-            yield example_request
-            yield example_request
-            yield example_request
-
-        response = await stub.example_stream_unary(
-            request_iterator(), metadata=method_metadata
-        )
-        assert response.example_metadata_field == method_metadata["field"]
-
-        # stream stream
-        async for response in stub.example_stream_stream(
-            request_iterator(), metadata=method_metadata
-        ):
-            assert response.example_metadata_field == method_metadata["field"]

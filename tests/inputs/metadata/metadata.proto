@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package metadata;
+
+service Test {
+  rpc EchoMetadataUnaryUnary(Payload) returns (Payload);
+  rpc EchoMetadataUnaryStream(Payload) returns (stream Payload);
+  rpc EchoMetadataStreamUnary(stream Payload) returns (Payload);
+  rpc EchoMetadataStreamStream(stream Payload) returns (stream Payload);
+}
+
+message Payload {
+  string value = 1;
+}
