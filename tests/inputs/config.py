@@ -21,6 +21,7 @@ services = {
     "empty_service",
     "service_uppercase",
     "metadata",
+    "raise_report",
 }
 
 

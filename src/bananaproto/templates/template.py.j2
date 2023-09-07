@@ -196,9 +196,14 @@ class {{ service.py_name }}Base(ServiceBase):
         except grpclib.GRPCError:
             raise
         except Exception as exc:
+            if len(exc.args) > 0:
+                status_message = f"{exc.__class__.__name__}: {exc.args[0]}"
+            else:
+                status_message = f"{exc.__class__.__name__}"
+
             await stream.send_trailing_metadata(
                 status=grpclib.const.Status.INTERNAL,
-                status_message=f'{exc.__class__.__name__}: {exc}',
+                status_message=status_message,
             )
             raise
 
