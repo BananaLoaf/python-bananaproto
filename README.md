@@ -512,7 +512,7 @@ protoc \
 - [x] Pass metadata to Service methods
 - [ ] Fix comments in generated code
 - [ ] Omit Empty argument from Stub and Service
-- [ ] When exception is raised in service method, raise gRPC error
+- [x] When exception is raised in service method, raise gRPC error
 - [ ] Auto sync-ify async methods
 - [x] Remove Pydantic, I don't like all the extra code
 

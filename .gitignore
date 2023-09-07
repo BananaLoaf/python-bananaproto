@@ -19,3 +19,4 @@ output
 .asv
 venv
 .devcontainer
+*.bin

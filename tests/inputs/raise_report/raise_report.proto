@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package raise_report;
+
+service Test {
+  rpc RaiseUnaryUnary(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc RaiseUnaryStream(google.protobuf.Empty) returns (stream google.protobuf.Empty);
+  rpc RaiseStreamUnary(stream google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc RaiseStreamStream(stream google.protobuf.Empty) returns (stream google.protobuf.Empty);
+}
