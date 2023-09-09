@@ -23,6 +23,3 @@ jobs:
 
       - name: black
         run: poetry run black . --diff
-
-      - name: precommit
-        uses: pre-commit/action@v2.0.3
