@@ -1,0 +1,25 @@
+name: Code Quality
+
+on: [push, pull_request]
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    name: Code Quality
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Setup Poetry
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: "1.3.2"
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: black
+        run: poetry run black . --check --diff

@@ -1,6 +1,9 @@
 # BANANA Protobuf / gRPC Support for Python
 
-![](https://github.com/BananaLoaf/python-bananaproto/workflows/CI/badge.svg)
+[![Python Version](https://img.shields.io/pypi/pyversions/bananaproto.svg?color=yellow&style=flat-square)](https://www.python.org/downloads/)
+[![GitHub Licence](https://img.shields.io/github/license/BananaLoaf/python-bananaproto.svg?color=blue&style=flat-square)](https://github.com/BananaLoaf/python-bananaproto/blob/master/LICENSE)
+[![Package Version](https://img.shields.io/pypi/v/bananaproto.svg?color=green&style=flat-square)](https://pypi.org/project/bananaproto/)
+[![Tests](https://github.com/BananaLoaf/python-bananaproto/actions/workflows/tests.yaml/badge.svg)](https://github.com/BananaLoaf/python-bananaproto/actions/workflows/tests.yaml)
 > :octocat: If you're reading this on github, please be aware that it might mention unreleased features! See the latest released README on [pypi](https://pypi.org/project/bananaproto/).
 
 ## This is a fork of [betterproto](https://github.com/danielgtaylor/python-betterproto)
