@@ -29,9 +29,7 @@ def clear_directory(dir_path: Path):
             file_or_directory.unlink()
 
 
-async def generate(whitelist: Set[str], verbose: bool):
-    test_case_names = set(get_directories(inputs_path)) - {"__pycache__"}
-
+def gather_tasks(test_case_names: Set[str], whitelist: Set[str], verbose: bool):
     path_whitelist = set()
     name_whitelist = set()
     for item in whitelist:
@@ -52,6 +50,14 @@ async def generate(whitelist: Set[str], verbose: bool):
         generation_tasks.append(
             generate_test_case_output(test_case_input_path, test_case_name, verbose)
         )
+
+    return generation_tasks
+
+
+async def generate(whitelist: Set[str], verbose: bool):
+    test_case_names = set(get_directories(inputs_path)) - {"__pycache__"}
+
+    generation_tasks = gather_tasks(test_case_names, whitelist, verbose)
 
     failed_test_cases = []
     # Wait for all subprocs and match any failures to names to report
@@ -135,6 +141,7 @@ async def generate_test_case_output(
             sys.stderr.buffer.write(plg_err)
             sys.stderr.buffer.flush()
 
+    print("--------------------------------")
     return max(ref_code, plg_code)
 
 
