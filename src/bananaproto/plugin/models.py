@@ -707,6 +707,8 @@ class ServiceMethodCompiler(ProtoContentBase):
         # Required by both client and server
         if self.client_streaming or self.server_streaming:
             self.output_file.imports.add("from typing import AsyncIterator")
+            self.output_file.imports.add("from typing import Iterator")
+        self.output_file.imports.add("from typing import Awaitable")
 
         # add imports required for request arguments timeout, deadline and metadata
         self.output_file.imports.add("from typing import Optional")
