@@ -702,13 +702,13 @@ class ServiceMethodCompiler(ProtoContentBase):
         if self.client_streaming:
             self.output_file.imports.add("from typing import AsyncIterable")
             self.output_file.imports.add("from typing import Iterable")
-            self.output_file.imports.add("from typing import Union")
 
         # Required by both client and server
         if self.client_streaming or self.server_streaming:
             self.output_file.imports.add("from typing import AsyncIterator")
             self.output_file.imports.add("from typing import Iterator")
         self.output_file.imports.add("from typing import Awaitable")
+        self.output_file.imports.add("from typing import Union")
 
         # add imports required for request arguments timeout, deadline and metadata
         self.output_file.imports.add("from typing import Optional")

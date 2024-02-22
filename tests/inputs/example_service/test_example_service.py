@@ -113,7 +113,7 @@ async def test_async_calls_with_different_cardinalities():
 @pytest.mark.asyncio
 async def test_sync_calls_with_different_cardinalities():
     host = "127.0.0.1"
-    port = 50051
+    port = 50052
     loop = SingletonEventLoop().get_loop()
     example_request = ExampleRequest("test string", 42)
 

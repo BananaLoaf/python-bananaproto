@@ -147,7 +147,7 @@ WIRE_LEN_DELIM_TYPES = [TYPE_STRING, TYPE_BYTES, TYPE_MESSAGE, TYPE_MAP]
 
 # Protobuf datetimes start at the Unix Epoch in 1970 in UTC.
 def datetime_default_gen() -> datetime:
-    return datetime(1970, 1, 1, tzinfo=timezone.utc)
+    return datetime(1970, 1, 1)
 
 
 DATETIME_ZERO = datetime_default_gen()
@@ -1229,7 +1229,10 @@ class Message(ABC):
                     cls = self._bananaproto.cls_by_field[field_name]
                     if isinstance(v, list):
                         if cls == datetime:
-                            v = [isoparse(item) for item in value[key]]
+                            v = [
+                                isoparse(item).replace(tzinfo=None)
+                                for item in value[key]
+                            ]
                         elif cls == timedelta:
                             v = [
                                 timedelta(seconds=float(item[:-1]))
@@ -1238,7 +1241,7 @@ class Message(ABC):
                         else:
                             v = [cls().from_dict(item) for item in value[key]]
                     elif cls == datetime:
-                        v = isoparse(value[key])
+                        v = isoparse(value[key]).replace(tzinfo=None)
                         setattr(self, field_name, v)
                     elif cls == timedelta:
                         v = timedelta(seconds=float(value[key][:-1]))
