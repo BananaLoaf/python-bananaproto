@@ -1192,6 +1192,20 @@ files = [
 six = ">=1.5"
 
 [[package]]
+name = "python-singleton"
+version = "0.1.2"
+description = "Singleton Metaclass."
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "python-singleton-0.1.2.tar.gz", hash = "sha256:8031b7e90153854376ab72c3a895b52872ca2a51289aeb34f050eafc804a6333"},
+]
+
+[package.dependencies]
+six = "*"
+
+[[package]]
 name = "requests"
 version = "2.28.2"
 description = "Python HTTP for Humans."
@@ -1375,4 +1389,4 @@ compiler = ["black", "isort", "jinja2"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.7"
-content-hash = "bb3339736239207d297f47577d60760cf62d807cc1582eb37271ebd83d86f7c5"
+content-hash = "25f212ec9f983f2a4030c91987ad85a802878a2c0d6ee85757761414c32d6aa4"

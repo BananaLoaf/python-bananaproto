@@ -19,6 +19,7 @@ grpclib = "^0.4.1"
 jinja2 = { version = ">=3.0.3", optional = true }
 python-dateutil = "^2.8"
 isort = {version = "^5.11.5", optional = true}
+python-singleton = "^0.1.2"
 
 [tool.poetry.dev-dependencies]
 bpython = "^0.19"
