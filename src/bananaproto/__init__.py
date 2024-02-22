@@ -1600,7 +1600,7 @@ class _Timestamp(Timestamp):
 
     def to_datetime(self) -> datetime:
         ts = self.seconds + (self.nanos / 1e9)
-        return datetime.fromtimestamp(ts, tz=timezone.utc)
+        return datetime.fromtimestamp(ts)
 
     @staticmethod
     def timestamp_to_json(dt: datetime) -> str:
