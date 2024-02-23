@@ -708,7 +708,6 @@ class ServiceMethodCompiler(ProtoContentBase):
             self.output_file.imports.add("from typing import AsyncIterator")
             self.output_file.imports.add("from typing import Iterator")
         self.output_file.imports.add("from typing import Awaitable")
-        self.output_file.imports.add("from typing import Union")
 
         # add imports required for request arguments timeout, deadline and metadata
         self.output_file.imports.add("from typing import Optional")

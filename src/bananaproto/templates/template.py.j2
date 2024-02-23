@@ -88,13 +88,13 @@ class {{ service.py_name }}Stub(bananaproto.ServiceStub):
             {%- if method.py_input_message -%} msg: {{ method.py_input_message_type }}, {%- endif -%}
         {%- else -%}
             {# Client streaming: need a request iterator instead #}
-            msg_iter: Union[AsyncIterable[{{ method.py_input_message_type }}], Iterable[{{ method.py_input_message_type }}]],
+            msg_iter: AsyncIterable[{{ method.py_input_message_type }}] | Iterable[{{ method.py_input_message_type }}],
         {%- endif -%}
             *,
             timeout: Optional[float] = None,
             deadline: Optional[Deadline] = None,
             metadata: Optional[MetadataLike] = None,
-            ) -> {% if method.server_streaming %}Union[AsyncIterator[{{ method.py_output_message_type }}], Iterator[{{ method.py_output_message_type }}]]{% else %}Union[Awaitable[{{ method.py_output_message_type }}], {{ method.py_output_message_type }}]{% endif %}:
+            ) -> {% if method.server_streaming %}AsyncIterator[{{ method.py_output_message_type }}] | Iterator[{{ method.py_output_message_type }}]{% else %}Awaitable[{{ method.py_output_message_type }}] | {{ method.py_output_message_type }}{% endif %}:
         {% if method.comment %}
 {{ method.comment }}
 

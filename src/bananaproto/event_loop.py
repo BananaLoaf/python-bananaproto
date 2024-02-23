@@ -6,18 +6,14 @@ from singleton import Singleton
 
 
 class EventLoop:
-    """Класс для создания одного уникального асинк лупа."""
-
     def __init__(self):
         self._loop: asyncio.AbstractEventLoop = None
         self._loop_created = threading.Event()
-        # Запускаем создатель лупа
         threading.Thread(
             target=self._loop_starter,
             name="Singleton event loop",
             daemon=True,
         ).start()
-        self._loop_created.wait()
 
     def _loop_starter(self):
         self._loop = asyncio.new_event_loop()
@@ -26,7 +22,6 @@ class EventLoop:
         self._loop.run_forever()
 
     def get_loop(self):
-        """Получить готовый луп."""
         self._loop_created.wait()
 
         while not self._loop.is_running():

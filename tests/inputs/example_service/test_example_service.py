@@ -3,7 +3,6 @@ from typing import AsyncIterator
 import pytest
 from grpclib.testing import ChannelFor
 
-
 from bananaproto.grpc.grpclib_client import MetadataLike
 from tests.inputs.example_service.output_bananaproto.example_service import (
     ExampleRequest,
