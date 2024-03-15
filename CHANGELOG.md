@@ -8,9 +8,9 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 - Versions suffixed with `b*` are in `beta` and can be installed with `pip install --pre bananaproto`.
 
-## [1.3.0] - Feb 23, 2024
+## [1.3.0] - Mar 15, 2024
 
-- Automatic synchronizer for stubs
+- Seamless await for coroutines
 - Removed timezone
 
 ## [1.2.0] - Oct 4, 2023
