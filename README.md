@@ -1,3 +1,49 @@
+## This is a fork of [betterproto](https://github.com/danielgtaylor/python-betterproto)
+
+- Fixed input types imports missing
+- Methods return non-string type hints
+- Server methods now receive metadata
+- Server-side exceptions get passed to client with original error message
+- Removed Pydantic
+- Support only `python3.10+`
+- Seamless await for coroutines (see below)
+
+# Seamless await for coroutines
+
+Usually you write code like this:
+
+```python
+from package import Stub
+
+stub = Stub(channel=channel)
+
+await stub.cool_method()
+
+async for res in stub.cool_stream():
+    pass
+```
+
+However, due to my personal needs, I added ability to seamlessly de-async coroutines and async generators.
+
+```python
+from bananaproto.event_loop import EventLoop, SingletonEventLoop
+from package import Stub
+
+# Creates a separate thread with loop running it in
+loop = EventLoop().get_loop()
+
+# Creates a single separate thread for the whole program execution with loop running it in
+loop = SingletonEventLoop().get_loop()
+# Any additional SingletonEventLoop().get_loop() would just return that same event loop
+
+stub = Stub(channel=channel, synchronization_loop=loop)
+
+# They now act as regular methods
+stub.cool_method()
+for res in stub.cool_stream():
+    pass
+```
+
 # BANANA Protobuf / gRPC Support for Python
 
 [![Python Version](https://img.shields.io/pypi/pyversions/bananaproto.svg?color=yellow&style=flat-square)](https://www.python.org/downloads/)
@@ -5,8 +51,6 @@
 [![Package Version](https://img.shields.io/pypi/v/bananaproto.svg?color=green&style=flat-square)](https://pypi.org/project/bananaproto/)
 [![Tests](https://github.com/BananaLoaf/python-bananaproto/actions/workflows/tests.yaml/badge.svg)](https://github.com/BananaLoaf/python-bananaproto/actions/workflows/tests.yaml)
 > :octocat: If you're reading this on github, please be aware that it might mention unreleased features! See the latest released README on [pypi](https://pypi.org/project/bananaproto/).
-
-## This is a fork of [betterproto](https://github.com/danielgtaylor/python-betterproto)
 
 This project aims to provide an improved experience when using Protobuf / gRPC in a modern Python environment by making use of modern language features and generating readable, understandable, idiomatic Python code. It will not support legacy features or environments (e.g. Protobuf 2). The following are supported:
 
@@ -507,17 +551,11 @@ protoc \
 
 ### Banana TODO
 
-- [x] Fix input types imports
-- [x] Non-string type hint
 - [ ] Add *Reflections* chapter to README
 - [ ] Return original folder structure
 - [ ] Automatically import *_pb2 for reflections
-- [x] Pass metadata to Service methods
 - [ ] Fix comments in generated code
 - [ ] Omit Empty argument from Stub and Service
-- [x] When exception is raised in service method, raise gRPC error
-- [ ] Auto sync-ify async methods
-- [x] Remove Pydantic, I don't like all the extra code
 
 ## License
 

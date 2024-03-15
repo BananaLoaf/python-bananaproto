@@ -32,7 +32,6 @@ def test_oneof_default_value_serialization_works_for_all_values():
                 day=1,
                 hour=0,
                 minute=0,
-                tzinfo=datetime.timezone.utc,
             )
         ),
         Test(duration_value=datetime.timedelta(0)),

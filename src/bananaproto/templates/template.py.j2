@@ -83,25 +83,25 @@ class {{ service.py_name }}Stub(bananaproto.ServiceStub):
     pass
     {% endif %}
     {% for method in service.methods %}
-    async def {{ method.py_name }}(self,
+    def {{ method.py_name }}(self,
         {%- if not method.client_streaming -%}
             {%- if method.py_input_message -%} msg: {{ method.py_input_message_type }}, {%- endif -%}
         {%- else -%}
             {# Client streaming: need a request iterator instead #}
-            msg_iter: Union[AsyncIterable[{{ method.py_input_message_type }}], Iterable[{{ method.py_input_message_type }}]],
+            msg_iter: AsyncIterable[{{ method.py_input_message_type }}] | Iterable[{{ method.py_input_message_type }}],
         {%- endif -%}
             *,
             timeout: Optional[float] = None,
             deadline: Optional[Deadline] = None,
             metadata: Optional[MetadataLike] = None,
-            ) -> {% if method.server_streaming %}AsyncIterator[{{ method.py_output_message_type }}]{% else %}{{ method.py_output_message_type }}{% endif %}:
+            ) -> {% if method.server_streaming %}AsyncIterator[{{ method.py_output_message_type }}] | Iterator[{{ method.py_output_message_type }}]{% else %}Awaitable[{{ method.py_output_message_type }}] | {{ method.py_output_message_type }}{% endif %}:
         {% if method.comment %}
 {{ method.comment }}
 
         {% endif %}
         {% if method.server_streaming %}
             {% if method.client_streaming %}
-        async for response in self._stream_stream(
+        async_iter = self._stream_stream(
             "{{ method.route }}",
             msg_iter,
             {{ method.py_input_message_type }},
@@ -109,23 +109,27 @@ class {{ service.py_name }}Stub(bananaproto.ServiceStub):
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
-        ):
-            yield response
+        )
+        if self.synchronization_loop is None:
+            return async_iter
+        return self._deasync_aiter(async_iter)
             {% else %}{# i.e. not client streaming #}
-        async for response in self._unary_stream(
+        async_iter = self._unary_stream(
             "{{ method.route }}",
             msg,
             {{ method.py_output_message_type.strip('"') }},
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
-        ):
-            yield response
+        )
+        if self.synchronization_loop is None:
+            return async_iter
+        return self._deasync_aiter(async_iter)
 
             {% endif %}{# if client streaming #}
         {% else %}{# i.e. not server streaming #}
             {% if method.client_streaming %}
-        return await self._stream_unary(
+        coro = self._stream_unary(
             "{{ method.route }}",
             msg_iter,
             {{ method.py_input_message_type }},
@@ -134,8 +138,11 @@ class {{ service.py_name }}Stub(bananaproto.ServiceStub):
             deadline=deadline,
             metadata=metadata,
         )
+        if self.synchronization_loop is None:
+            return coro
+        return self._deasync_coro(coro)
             {% else %}{# i.e. not client streaming #}
-        return await self._unary_unary(
+        coro = self._unary_unary(
             "{{ method.route }}",
             msg,
             {{ method.py_output_message_type.strip('"') }},
@@ -143,6 +150,9 @@ class {{ service.py_name }}Stub(bananaproto.ServiceStub):
             deadline=deadline,
             metadata=metadata,
         )
+        if self.synchronization_loop is None:
+            return coro
+        return self._deasync_coro(coro)
             {% endif %}{# client streaming #}
         {% endif %}
 

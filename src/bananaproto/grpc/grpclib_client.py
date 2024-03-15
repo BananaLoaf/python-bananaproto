@@ -11,6 +11,8 @@ from typing import (
     Tuple,
     Type,
     Union,
+    Awaitable,
+    Iterator,
 )
 
 import grpclib.const
@@ -42,11 +44,16 @@ class ServiceStub(ABC):
         self,
         channel: "Channel",
         *,
+        synchronization_loop: Optional[asyncio.AbstractEventLoop] = None,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional[MetadataLike] = None,
     ) -> None:
         self.channel = channel
+        self.synchronization_loop = synchronization_loop
+        if synchronization_loop is not None:
+            self.channel._loop = synchronization_loop
+
         self.timeout = timeout
         self.deadline = deadline
         self.metadata = metadata
@@ -174,3 +181,18 @@ class ServiceStub(ABC):
             for message in messages:
                 await stream.send_message(message)
         await stream.end()
+
+    def _deasync_coro(self, coro: Awaitable["T"]) -> "T":
+        return asyncio.run_coroutine_threadsafe(
+            coro, loop=self.synchronization_loop
+        ).result()
+
+    def _deasync_aiter(self, async_iter: AsyncIterator["T"]) -> Iterator["T"]:
+        while True:
+            future = asyncio.run_coroutine_threadsafe(
+                anext(async_iter), loop=self.synchronization_loop
+            )
+            try:
+                yield future.result()
+            except StopAsyncIteration:
+                break
