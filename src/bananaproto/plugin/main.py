@@ -2,6 +2,7 @@
 
 import os
 import sys
+from datetime import datetime
 from pathlib import Path
 
 from bananaproto.lib.google.protobuf.compiler import (
@@ -46,13 +47,8 @@ def main() -> None:
 
 
 def dump_request(dump_dir: Path, request: CodeGeneratorRequest) -> None:
-    """
-    For developers: Supports running plugin.py standalone so its possible to debug it.
-    Run protoc (or generate.py) with BANANAPROTO_DUMP="yourfile.bin" to write the request to a file.
-    Then run plugin.py from your IDE in debugging mode, and redirect stdin to the file.
-    """
-    dump_dir.mkdir(parents=True, exist_ok=True)
-    dump_file = dump_dir / "-".join(request.file_to_generate)
+    dump_dir.resolve().mkdir(parents=True, exist_ok=True)
+    dump_file = dump_dir / datetime.now().isoformat().replace(".", "-")
     dump_file = dump_file.with_suffix(".bin")
 
     with dump_file.open("wb") as fh:
