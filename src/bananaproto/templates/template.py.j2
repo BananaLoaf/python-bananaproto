@@ -110,9 +110,6 @@ class {{ service.py_name }}Stub(bananaproto.ServiceStub):
             deadline=deadline,
             metadata=metadata,
         )
-        if self.synchronization_loop is None:
-            return async_iter
-        return self._deasync_aiter(async_iter)
             {% else %}{# i.e. not client streaming #}
         async_iter = self._unary_stream(
             "{{ method.route }}",
@@ -122,11 +119,10 @@ class {{ service.py_name }}Stub(bananaproto.ServiceStub):
             deadline=deadline,
             metadata=metadata,
         )
-        if self.synchronization_loop is None:
-            return async_iter
-        return self._deasync_aiter(async_iter)
-
             {% endif %}{# if client streaming #}
+        if self._loop is None:
+            return async_iter
+        return self._loop.run_in_loop(async_iter)
         {% else %}{# i.e. not server streaming #}
             {% if method.client_streaming %}
         coro = self._stream_unary(
@@ -138,9 +134,6 @@ class {{ service.py_name }}Stub(bananaproto.ServiceStub):
             deadline=deadline,
             metadata=metadata,
         )
-        if self.synchronization_loop is None:
-            return coro
-        return self._deasync_coro(coro)
             {% else %}{# i.e. not client streaming #}
         coro = self._unary_unary(
             "{{ method.route }}",
@@ -150,10 +143,10 @@ class {{ service.py_name }}Stub(bananaproto.ServiceStub):
             deadline=deadline,
             metadata=metadata,
         )
-        if self.synchronization_loop is None:
-            return coro
-        return self._deasync_coro(coro)
             {% endif %}{# client streaming #}
+        if self._loop is None:
+            return coro
+        return self._loop.run_in_loop(coro)
         {% endif %}
 
     {% endfor %}
