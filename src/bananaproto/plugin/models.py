@@ -706,16 +706,22 @@ class ServiceMethodCompiler(ProtoContentBase):
         # Required by both client and server
         if self.client_streaming or self.server_streaming:
             self.output_file.imports.add("from typing import AsyncIterator")
-            self.output_file.imports.add("from typing import Iterator")
-        self.output_file.imports.add("from typing import Awaitable")
+            self.output_file.imports.add(
+                "from bananaproto.grpc.grpclib_client import StreamResponse"
+            )
+        self.output_file.imports.add(
+            "from bananaproto.grpc.grpclib_client import UnaryResponse"
+        )
 
         # add imports required for request arguments timeout, deadline and metadata
         self.output_file.imports.add("from typing import Optional")
         self.output_file.imports_type_checking_only.add("import grpclib.server")
-        self.output_file.imports.add(
+        self.output_file.imports_type_checking_only.add(
             "from bananaproto.grpc.grpclib_client import MetadataLike"
         )
-        self.output_file.imports.add("from grpclib.metadata import Deadline")
+        self.output_file.imports_type_checking_only.add(
+            "from grpclib.metadata import Deadline"
+        )
 
         super().__post_init__()  # check for unset fields
 

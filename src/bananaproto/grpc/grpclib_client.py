@@ -13,6 +13,7 @@ from typing import (
     Union,
     Awaitable,
     Iterator,
+    TypeVar,
 )
 
 import grpclib.const
@@ -34,6 +35,10 @@ if TYPE_CHECKING:
 Value = Union[str, bytes]
 MetadataLike = Union[Mapping[str, Value], Collection[Tuple[str, Value]]]
 MessageSource = Union[Iterable["IProtoMessage"], AsyncIterable["IProtoMessage"]]
+
+R = TypeVar("R")
+UnaryResponse = Union[R, Awaitable[R]]
+StreamResponse = Union[Iterator[R], AsyncIterator[R]]
 
 
 class ServiceStub(ABC):
