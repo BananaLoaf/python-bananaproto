@@ -2,7 +2,7 @@ import asyncio
 import threading
 import time
 
-from singleton import Singleton
+from simple_singleton import Singleton
 
 
 class EventLoop:
@@ -11,7 +11,7 @@ class EventLoop:
         self._loop_created = threading.Event()
         threading.Thread(
             target=self._loop_starter,
-            name="Singleton event loop",
+            name="Event loop",
             daemon=True,
         ).start()
 
